@@ -3,10 +3,6 @@
 data "template_file" "kubeconfig" {
   template = "${file("templates/kubeconfig.tpl")}"
 
-  depends_on = [
-    "module.eks-cluster",
-  ]
-
   vars {
     endpoint     = "${module.eks-cluster.eks-endpoint}"
     ca           = "${module.eks-cluster.eks-ca}"
@@ -16,7 +12,7 @@ data "template_file" "kubeconfig" {
 
 resource "null_resource" "trigger" {
   triggers {
-    template_rendered = "${data.template_file.kubeconfig.rendered}"
+    template_rendered = "${data.template_file.kubeconfig.id}"
   }
 
   provisioner "local-exec" {
