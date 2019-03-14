@@ -24,7 +24,7 @@ module "eks-secgroup" {
 
   CLUSTER_NAME  = "${var.CLUSTER_NAME}"
   VPC_ID        = "${module.eks-vpc.vpc_id}"
-  EXTERNAL_PORT = ["443", "22"]
+  EXTERNAL_PORT = ["443"]
 }
 
 module "eks-master-iam" {
@@ -61,7 +61,7 @@ module "eks-nodes" {
   ROLE_NAME        = "${module.eks-node-iam.role_name}"
   IMAGE_ID         = "${data.aws_ami.eks-node-ami.id}"
   WORKER_FLAVOR    = "t2.large"
-  SUBNET_IDS       = "${module.eks-vpc.public_subnets}"
+  SUBNET_IDS       = "${module.eks-vpc.private_subnets}"
   SECURITY_GROUPS  = ["${module.eks-secgroup.eks_node_security_group}"]
   MIN_NUMBER_NODES = 2
   MAX_NUMBER_NODES = 5

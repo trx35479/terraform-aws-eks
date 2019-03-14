@@ -30,6 +30,8 @@ resource "aws_subnet" "main-public" {
   }"
 }
 
+#note on the tags (if private vpc - this tag should be used "kubernetes.io/role/internal-elb", "1")
+
 resource "aws_subnet" "main-private" {
   count                   = "${length(var.PRIVATE_SUBNET)}"
   vpc_id                  = "${aws_vpc.main.id}"
@@ -40,7 +42,7 @@ resource "aws_subnet" "main-private" {
   tags = "${
     map(
      "Name", "${var.CLUSTER_NAME}",
-     "kubernetes.io/cluster/${var.CLUSTER_NAME}", "shared",
+     "kubernetes.io/role/internal-elb", "1",
     )
   }"
 }
@@ -68,4 +70,41 @@ resource "aws_route_table_association" "main-public" {
   count          = "${length(var.PUBLIC_SUBNET)}"
   subnet_id      = "${element(aws_subnet.main-public.*.id, count.index)}"
   route_table_id = "${aws_route_table.main-public.id}"
+}
+
+# Private Subnet Route table 
+# Dealing with private subnets is different than the public subner
+# we neede to create a nat gateway and attach it to public subnet
+
+#resource "aws_network_interface" "net-interface" {
+#  count = "${length(var.PUBLIC_SUBNET)}"
+#  subnet_id = "${element(var.PUBLIC_SUBNET, count.index)}"
+#  private_ips = ["", "", ""]
+#}
+
+resource "aws_eip" "nat-ips" {
+  count = "${length(var.PUBLIC_SUBNET)}"
+  vpc   = true
+}
+
+resource "aws_nat_gateway" "private-nat-gw" {
+  count         = "${length(var.PUBLIC_SUBNET)}"
+  allocation_id = "${element(aws_eip.nat-ips.*.id, count.index)}"
+  subnet_id     = "${element(aws_subnet.main-public.*.id, count.index)}"
+}
+
+resource "aws_route_table" "main-private-route" {
+  count  = "${length(var.PRIVATE_SUBNET)}"
+  vpc_id = "${aws_vpc.main.id}"
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = "${element(aws_nat_gateway.private-nat-gw.*.id, count.index)}"
+  }
+}
+
+resource "aws_route_table_association" "main-private" {
+  count          = "${length(var.PRIVATE_SUBNET)}"
+  subnet_id      = "${element(aws_subnet.main-private.*.id, count.index)}"
+  route_table_id = "${element(aws_route_table.main-private-route.*.id, count.index)}"
 }
