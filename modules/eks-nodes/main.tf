@@ -5,6 +5,7 @@ resource "aws_iam_instance_profile" "eks-node" {
 }
 
 resource "aws_launch_configuration" "cluster-config" {
+  name                 = "${var.CLUSTER_NAME}-launch-configuration"
   iam_instance_profile = "${aws_iam_instance_profile.eks-node.name}"
   image_id             = "${var.IMAGE_ID}"
   instance_type        = "${var.WORKER_FLAVOR}"

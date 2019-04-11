@@ -3,7 +3,7 @@ variable "AWS_REGION" {
 }
 
 variable "CLUSTER_NAME" {
-  default = "unico-eks"
+  default = "my-eks"
 }
 
 variable "PATH_TO_PUBLIC_KEY" {
