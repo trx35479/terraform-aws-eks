@@ -63,7 +63,7 @@ module "eks-nodes" {
   WORKER_FLAVOR    = "t2.small"
   SUBNET_IDS       = "${module.eks-vpc.private_subnets}"
   SECURITY_GROUPS  = ["${module.eks-secgroup.eks_node_security_group}"]
-  MIN_NUMBER_NODES = 3
+  MIN_NUMBER_NODES = 2
   MAX_NUMBER_NODES = 5
   WORKER_USER_DATA = "${base64encode(data.template_file.bootstrap-node.rendered)}"
 }
