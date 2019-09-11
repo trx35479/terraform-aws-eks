@@ -71,6 +71,15 @@ resource "aws_security_group_rule" "eks-cluster-internal-ingress" {
   source_security_group_id = "${aws_security_group.eks-node-internal.id}"
 }
 
+resource "aws_security_group_rule" "eks-cluster-external-ingress" {
+  from_port                = "${element(var.EXTERNAL_PORT, 0)}"
+  to_port                  = "${element(var.EXTERNAL_PORT, 0)}"
+  protocol                 = "tcp"
+  type                     = "ingress"
+  security_group_id        = "${aws_security_group.eks-node-internal.id}"
+  source_security_group_id = "${aws_security_group.eks-cluster-external.id}"
+}
+
 resource "aws_security_group_rule" "eks-node-allow-ssh" {
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = "${element(var.EXTERNAL_PORT, 1)}"

@@ -3,8 +3,8 @@
 # that been generated the last time the terraform apply was commited
 terraform {
   backend "s3" {
-    bucket  = "ruchi-state-k8s-store"
-    key     = "eks/aws/terraform.tfstate"
+    bucket  = "terraform-aws-statefile"
+    key     = "infra/eks/terraform.tfstate"
     region  = "ap-southeast-2"
     encrypt = true
   }
