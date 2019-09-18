@@ -1,69 +1,113 @@
 # Instantiate the modules
 provider "aws" {
-  region = "${var.aws_region}"
+  region = var.aws_region
 }
 
 resource "aws_key_pair" "mykeypair" {
   key_name   = "${var.cluster_name}-mykeypair"
-  public_key = "${file("${var.path_to_public_key}")}"
+  public_key = file(var.path_to_public_key)
 }
 
 module "eks-vpc" {
-  source = "modules/eks-vpc"
+  # TF-UPGRADE-TODO: In Terraform v0.11 and earlier, it was possible to
+  # reference a relative module source without a preceding ./, but it is no
+  # longer supported in Terraform v0.12.
+  #
+  # If the below module source is indeed a relative local path, add ./ to the
+  # start of the source string. If that is not the case, then leave it as-is
+  # and remove this TODO comment.
+  source = "./modules/eks-vpc"
 
-  aws_region     = "${var.aws_region}"
-  cluster_name   = "${var.cluster_name}"
+  aws_region     = var.aws_region
+  cluster_name   = var.cluster_name
   vpc_cidr_block = "10.212.0.0/16"
   public_subnet  = ["10.212.10.0/24", "10.212.30.0/24", "10.212.50.0/24"]
   private_subnet = ["10.212.20.0/24", "10.212.40.0/24", "10.212.60.0/24"]
-  aws_az         = ["${data.aws_availability_zones.az.names}"]
+  aws_az         = data.aws_availability_zones.az.names
 }
 
-module "eks-secgroup" {
-  source = "modules/eks-secgroups"
-
-  cluster_name  = "${var.cluster_name}"
-  vpc_id        = "${module.eks-vpc.vpc_id}"
-  external_port = ["443", "22"]
-}
-
-module "eks-master-iam" {
-  source = "modules/iam-roles"
-
-  cluster_role       = "${var.cluster_name}-master"
-  service_role       = "eks.amazonaws.com"
-  eks_policy_cluster = ["AmazonEKSClusterPolicy", "AmazonEKSServicePolicy"]
-}
-
-module "eks-node-iam" {
-  source = "modules/iam-roles"
-
-  cluster_role       = "${var.cluster_name}-node"
-  service_role       = "ec2.amazonaws.com"
-  eks_policy_cluster = ["AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly"]
-}
-
-module "eks-cluster" {
-  source = "modules/eks-cluster"
-
-  cluster_name    = "${var.cluster_name}"
-  role_arn        = "${module.eks-master-iam.arn}"
-  policy_arn      = "${module.eks-master-iam.policy_arn}"
-  subnet_ids      = "${module.eks-vpc.public_subnets}"
-  security_groups = ["${module.eks-secgroup.eks_cluster_security_group}"]
-}
-
-module "eks-nodes" {
-  source = "modules/eks-nodes"
-
-  cluster_name     = "${var.cluster_name}"
-  aws_keypair      = "${aws_key_pair.mykeypair.key_name}"
-  role_name        = "${module.eks-node-iam.role_name}"
-  image_id         = "${data.aws_ami.eks-node-ami.id}"
-  worker_flavor    = "t2.small"
-  subnet_ids       = "${module.eks-vpc.private_subnets}"
-  security_groups  = ["${module.eks-secgroup.eks_node_security_group}"]
-  min_number_nodes = 3
-  max_number_nodes = 5
-  worker_user_data = "${base64encode(data.template_file.bootstrap-node.rendered)}"
-}
+#module "eks-secgroup" {
+#  # TF-UPGRADE-TODO: In Terraform v0.11 and earlier, it was possible to
+#  # reference a relative module source without a preceding ./, but it is no
+#  # longer supported in Terraform v0.12.
+#  #
+#  # If the below module source is indeed a relative local path, add ./ to the
+#  # start of the source string. If that is not the case, then leave it as-is
+#  # and remove this TODO comment.
+#  source = "./modules/eks-secgroups"
+#
+#  cluster_name  = var.cluster_name
+#  vpc_id        = module.eks-vpc.vpc_id
+#  external_port = ["443", "22"]
+#}
+#
+#module "eks-master-iam" {
+#  # TF-UPGRADE-TODO: In Terraform v0.11 and earlier, it was possible to
+#  # reference a relative module source without a preceding ./, but it is no
+#  # longer supported in Terraform v0.12.
+#  #
+#  # If the below module source is indeed a relative local path, add ./ to the
+#  # start of the source string. If that is not the case, then leave it as-is
+#  # and remove this TODO comment.
+#  source = "./modules/iam-roles"
+#
+#  cluster_role       = "${var.cluster_name}-master"
+#  service_role       = "eks.amazonaws.com"
+#  eks_policy_cluster = ["AmazonEKSClusterPolicy", "AmazonEKSServicePolicy"]
+#}
+#
+#module "eks-node-iam" {
+#  # TF-UPGRADE-TODO: In Terraform v0.11 and earlier, it was possible to
+#  # reference a relative module source without a preceding ./, but it is no
+#  # longer supported in Terraform v0.12.
+#  #
+#  # If the below module source is indeed a relative local path, add ./ to the
+#  # start of the source string. If that is not the case, then leave it as-is
+#  # and remove this TODO comment.
+#  source = "./modules/iam-roles"
+#
+#  cluster_role       = "${var.cluster_name}-node"
+#  service_role       = "ec2.amazonaws.com"
+#  eks_policy_cluster = ["AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly"]
+#}
+#
+#module "eks-cluster" {
+#  # TF-UPGRADE-TODO: In Terraform v0.11 and earlier, it was possible to
+#  # reference a relative module source without a preceding ./, but it is no
+#  # longer supported in Terraform v0.12.
+#  #
+#  # If the below module source is indeed a relative local path, add ./ to the
+#  # start of the source string. If that is not the case, then leave it as-is
+#  # and remove this TODO comment.
+#  source = "./modules/eks-cluster"
+#
+#  cluster_name    = var.cluster_name
+#  role_arn        = module.eks-master-iam.arn
+#  policy_arn      = module.eks-master-iam.policy_arn
+#  subnet_ids      = module.eks-vpc.public_subnets
+#  security_groups = [module.eks-secgroup.eks_cluster_security_group]
+#}
+#
+#module "eks-nodes" {
+#  # TF-UPGRADE-TODO: In Terraform v0.11 and earlier, it was possible to
+#  # reference a relative module source without a preceding ./, but it is no
+#  # longer supported in Terraform v0.12.
+#  #
+#  # If the below module source is indeed a relative local path, add ./ to the
+#  # start of the source string. If that is not the case, then leave it as-is
+#  # and remove this TODO comment.
+#  source = "./modules/eks-nodes"
+#
+#  cluster_name     = var.cluster_name
+#  aws_keypair      = aws_key_pair.mykeypair.key_name
+#  role_name        = module.eks-node-iam.role_name
+#  image_id         = data.aws_ami.eks-node-ami.id
+#  worker_flavor    = "t2.small"
+#  subnet_ids       = module.eks-vpc.private_subnets
+#  security_groups  = [module.eks-secgroup.eks_node_security_group]
+#  min_number_nodes = 3
+#  max_number_nodes = 5
+#  worker_user_data = base64encode(data.template_file.bootstrap-node.rendered)
+#}
+#
+#

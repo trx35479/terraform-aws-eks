@@ -1,23 +1,32 @@
-variable "cluster_name" {}
+variable "cluster_name" {
+}
 
-variable "role_name" {}
+variable "role_name" {
+}
 
-variable "aws_keypair" {}
+variable "aws_keypair" {
+}
 
-variable "worker_flavor" {}
+variable "worker_flavor" {
+}
 
-variable "image_id" {}
+variable "image_id" {
+}
 
 variable "subnet_ids" {
-  type = "list"
+  type = list(string)
 }
 
 variable "security_groups" {
-  type = "list"
+  type = list(string)
 }
 
-variable "worker_user_data" {}
+variable "worker_user_data" {
+}
 
-variable "min_number_nodes" {}
+variable "min_number_nodes" {
+}
 
-variable "max_number_nodes" {}
+variable "max_number_nodes" {
+}
+
