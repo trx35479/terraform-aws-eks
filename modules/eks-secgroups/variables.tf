@@ -1,7 +1,7 @@
-variable "CLUSTER_NAME" {}
+variable "cluster_name" {}
 
-variable "VPC_ID" {}
+variable "vpc_id" {}
 
-variable "EXTERNAL_PORT" {
+variable "external_port" {
   type = "list"
 }

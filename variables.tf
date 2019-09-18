@@ -1,11 +1,11 @@
-variable "AWS_REGION" {
+variable "aws_region" {
   default = "ap-southeast-2"
 }
 
-variable "CLUSTER_NAME" {
+variable "cluster_name" {
   default = "my-eks"
 }
 
-variable "PATH_TO_PUBLIC_KEY" {
+variable "path_to_public_key" {
   default = "~/.ssh/id_rsa.pub"
 }

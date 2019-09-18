@@ -1,15 +1,15 @@
-variable "ROLE_ARN" {}
+variable "role_arn" {}
 
-variable "CLUSTER_NAME" {}
+variable "cluster_name" {}
 
-variable "SECURITY_GROUPS" {
+variable "security_groups" {
   type = "list"
 }
 
-variable "SUBNET_IDS" {
+variable "subnet_ids" {
   type = "list"
 }
 
-variable "POLICY_ARN" {
+variable "policy_arn" {
   type = "list"
 }

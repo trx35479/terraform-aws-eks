@@ -1,69 +1,69 @@
 # Instantiate the modules
 provider "aws" {
-  region = "${var.AWS_REGION}"
+  region = "${var.aws_region}"
 }
 
 resource "aws_key_pair" "mykeypair" {
-  key_name   = "${var.CLUSTER_NAME}-mykeypair"
-  public_key = "${file("${var.PATH_TO_PUBLIC_KEY}")}"
+  key_name   = "${var.cluster_name}-mykeypair"
+  public_key = "${file("${var.path_to_public_key}")}"
 }
 
 module "eks-vpc" {
   source = "modules/eks-vpc"
 
-  AWS_REGION     = "${var.AWS_REGION}"
-  CLUSTER_NAME   = "${var.CLUSTER_NAME}"
-  VPC_CIDR_BLOCK = "10.212.0.0/16"
-  PUBLIC_SUBNET  = ["10.212.10.0/24", "10.212.30.0/24", "10.212.50.0/24"]
-  PRIVATE_SUBNET = ["10.212.20.0/24", "10.212.40.0/24", "10.212.60.0/24"]
-  AWS_AZ         = ["${data.aws_availability_zones.az.names}"]
+  aws_region     = "${var.aws_region}"
+  cluster_name   = "${var.cluster_name}"
+  vpc_cidr_block = "10.212.0.0/16"
+  public_subnet  = ["10.212.10.0/24", "10.212.30.0/24", "10.212.50.0/24"]
+  private_subnet = ["10.212.20.0/24", "10.212.40.0/24", "10.212.60.0/24"]
+  aws_az         = ["${data.aws_availability_zones.az.names}"]
 }
 
 module "eks-secgroup" {
   source = "modules/eks-secgroups"
 
-  CLUSTER_NAME  = "${var.CLUSTER_NAME}"
-  VPC_ID        = "${module.eks-vpc.vpc_id}"
-  EXTERNAL_PORT = ["443", "22"]
+  cluster_name  = "${var.cluster_name}"
+  vpc_id        = "${module.eks-vpc.vpc_id}"
+  external_port = ["443", "22"]
 }
 
 module "eks-master-iam" {
   source = "modules/iam-roles"
 
-  CLUSTER_ROLE       = "${var.CLUSTER_NAME}-master"
-  SERVICE_ROLE       = "eks.amazonaws.com"
-  EKS_CLUSTER_POLICY = ["AmazonEKSClusterPolicy", "AmazonEKSServicePolicy"]
+  cluster_role       = "${var.cluster_name}-master"
+  service_role       = "eks.amazonaws.com"
+  eks_policy_cluster = ["AmazonEKSClusterPolicy", "AmazonEKSServicePolicy"]
 }
 
 module "eks-node-iam" {
   source = "modules/iam-roles"
 
-  CLUSTER_ROLE       = "${var.CLUSTER_NAME}-node"
-  SERVICE_ROLE       = "ec2.amazonaws.com"
-  EKS_CLUSTER_POLICY = ["AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly"]
+  cluster_role       = "${var.cluster_name}-node"
+  service_role       = "ec2.amazonaws.com"
+  eks_policy_cluster = ["AmazonEKSWorkerNodePolicy", "AmazonEKS_CNI_Policy", "AmazonEC2ContainerRegistryReadOnly"]
 }
 
 module "eks-cluster" {
   source = "modules/eks-cluster"
 
-  CLUSTER_NAME    = "${var.CLUSTER_NAME}"
-  ROLE_ARN        = "${module.eks-master-iam.arn}"
-  POLICY_ARN      = "${module.eks-master-iam.policy_arn}"
-  SUBNET_IDS      = "${module.eks-vpc.public_subnets}"
-  SECURITY_GROUPS = ["${module.eks-secgroup.eks_cluster_security_group}"]
+  cluster_name    = "${var.cluster_name}"
+  role_arn        = "${module.eks-master-iam.arn}"
+  policy_arn      = "${module.eks-master-iam.policy_arn}"
+  subnet_ids      = "${module.eks-vpc.public_subnets}"
+  security_groups = ["${module.eks-secgroup.eks_cluster_security_group}"]
 }
 
 module "eks-nodes" {
   source = "modules/eks-nodes"
 
-  CLUSTER_NAME     = "${var.CLUSTER_NAME}"
-  AWS_KEYPAIR      = "${aws_key_pair.mykeypair.key_name}"
-  ROLE_NAME        = "${module.eks-node-iam.role_name}"
-  IMAGE_ID         = "${data.aws_ami.eks-node-ami.id}"
-  WORKER_FLAVOR    = "t2.medium"
-  SUBNET_IDS       = "${module.eks-vpc.private_subnets}"
-  SECURITY_GROUPS  = ["${module.eks-secgroup.eks_node_security_group}"]
-  MIN_NUMBER_NODES = 3
-  MAX_NUMBER_NODES = 5
-  WORKER_USER_DATA = "${base64encode(data.template_file.bootstrap-node.rendered)}"
+  cluster_name     = "${var.cluster_name}"
+  aws_keypair      = "${aws_key_pair.mykeypair.key_name}"
+  role_name        = "${module.eks-node-iam.role_name}"
+  image_id         = "${data.aws_ami.eks-node-ami.id}"
+  worker_flavor    = "t2.small"
+  subnet_ids       = "${module.eks-vpc.private_subnets}"
+  security_groups  = ["${module.eks-secgroup.eks_node_security_group}"]
+  min_number_nodes = 3
+  max_number_nodes = 5
+  worker_user_data = "${base64encode(data.template_file.bootstrap-node.rendered)}"
 }

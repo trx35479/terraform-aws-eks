@@ -6,7 +6,7 @@ data "template_file" "bootstrap-node" {
   vars {
     endpoint     = "${module.eks-cluster.eks-endpoint}"
     ca           = "${module.eks-cluster.eks-ca}"
-    cluster_name = "${var.CLUSTER_NAME}"
+    cluster_name = "${var.cluster_name}"
   }
 }
 

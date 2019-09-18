@@ -1,15 +1,15 @@
-variable "AWS_REGION" {}
-variable "CLUSTER_NAME" {}
-variable "VPC_CIDR_BLOCK" {}
+variable "aws_region" {}
+variable "cluster_name" {}
+variable "vpc_cidr_block" {}
 
-variable "PUBLIC_SUBNET" {
+variable "public_subnet" {
   type = "list"
 }
 
-variable "PRIVATE_SUBNET" {
+variable "private_subnet" {
   type = "list"
 }
 
-variable "AWS_AZ" {
+variable "aws_az" {
   type = "list"
 }

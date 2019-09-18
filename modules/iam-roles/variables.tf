@@ -1,7 +1,7 @@
-variable "CLUSTER_ROLE" {}
+variable "cluster_role" {}
 
-variable "EKS_CLUSTER_POLICY" {
+variable "eks_policy_cluster" {
   type = "list"
 }
 
-variable "SERVICE_ROLE" {}
+variable "service_role" {}

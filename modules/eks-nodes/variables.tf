@@ -1,23 +1,23 @@
-variable "CLUSTER_NAME" {}
+variable "cluster_name" {}
 
-variable "ROLE_NAME" {}
+variable "role_name" {}
 
-variable "AWS_KEYPAIR" {}
+variable "aws_keypair" {}
 
-variable "WORKER_FLAVOR" {}
+variable "worker_flavor" {}
 
-variable "IMAGE_ID" {}
+variable "image_id" {}
 
-variable "SUBNET_IDS" {
+variable "subnet_ids" {
   type = "list"
 }
 
-variable "SECURITY_GROUPS" {
+variable "security_groups" {
   type = "list"
 }
 
-variable "WORKER_USER_DATA" {}
+variable "worker_user_data" {}
 
-variable "MIN_NUMBER_NODES" {}
+variable "min_number_nodes" {}
 
-variable "MAX_NUMBER_NODES" {}
+variable "max_number_nodes" {}
