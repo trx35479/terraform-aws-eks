@@ -5,7 +5,7 @@ resource "aws_iam_instance_profile" "eks-node" {
 }
 
 resource "aws_launch_configuration" "cluster-config" {
-  name                 = "${var.cluster_name}-launch-configuration"
+  name                 = "${var.cluster_name}-lc"
   iam_instance_profile = aws_iam_instance_profile.eks-node.name
   image_id             = var.image_id
   instance_type        = var.worker_flavor
@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "cluster-asg" {
 
 # define the scaling out policy
 resource "aws_autoscaling_policy" "asg-scaleout" {
-  name                   = "${var.cluster_name}-asg-scaleout"
+  name                   = "${var.cluster_name}-scaleout"
   scaling_adjustment     = 2
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 300
@@ -51,7 +51,7 @@ resource "aws_autoscaling_policy" "asg-scaleout" {
 
 # define the scaling in policy
 resource "aws_autoscaling_policy" "asg-scalein" {
-  name                   = "${var.cluster_name}-asg-scalein"
+  name                   = "${var.cluster_name}-scalein"
   scaling_adjustment     = -1
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 300

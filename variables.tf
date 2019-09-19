@@ -3,7 +3,7 @@ variable "aws_region" {
 }
 
 variable "cluster_name" {
-  default = "my-eks"
+  default = "eks-dev"
 }
 
 variable "path_to_public_key" {
