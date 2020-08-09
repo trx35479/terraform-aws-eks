@@ -5,7 +5,7 @@ provider "aws" {
 
 resource "aws_key_pair" "mykeypair" {
   key_name   = "${var.cluster_name}-mykeypair"
-  public_key = "${file("${var.id_rsa_pub}")}"
+  public_key = "${var.id_rsa_pub}"
 }
 
 module "eks-vpc" {
