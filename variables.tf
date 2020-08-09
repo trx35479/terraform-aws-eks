@@ -7,5 +7,5 @@ variable "cluster_name" {
 }
 
 variable "path_to_public_key" {
-  default = "~/.ssh/id_rsa.pub"
+  default = "auth/id_rsa.pub"
 }
