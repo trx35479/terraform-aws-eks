@@ -12,8 +12,8 @@ resource "aws_eks_cluster" "eks-cluster" {
   role_arn = var.role_arn
 
   vpc_config {
-    security_group_ids = [var.security_groups]
-    subnet_ids         = [var.subnet_ids]
+    security_group_ids = tolist(var.security_groups)
+    subnet_ids         = tolist(var.subnet_ids)
   }
 
   depends_on = [null_resource.check-dependency-iam-role]

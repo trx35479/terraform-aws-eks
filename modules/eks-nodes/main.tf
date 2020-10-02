@@ -58,7 +58,7 @@ resource "aws_autoscaling_policy" "asg-scalein" {
   autoscaling_group_name = aws_autoscaling_group.cluster-asg.name
 }
 
-# define the cloud watch for scaleout policy
+# define the cloud watch for scale out policy
 resource "aws_cloudwatch_metric_alarm" "high-alarm" {
   alarm_name          = "${var.cluster_name}-high-alarm"
   comparison_operator = "GreaterThanOrEqualToThreshold"
@@ -77,7 +77,7 @@ resource "aws_cloudwatch_metric_alarm" "high-alarm" {
   alarm_actions     = [aws_autoscaling_policy.asg-scaleout.arn]
 }
 
-# define the cloud watch for scalein policy
+# define the cloud watch for scale in policy
 resource "aws_cloudwatch_metric_alarm" "low-alarm" {
   alarm_name          = "${var.cluster_name}-low-alarm"
   comparison_operator = "LessThanOrEqualToThreshold"
