@@ -7,7 +7,7 @@ resource "aws_key_pair" "mykeypair" {
 }
 
 module "eks-vpc" {
-  source = "modules/eks-vpc"
+  source = "./modules/eks-vpc"
 
   aws_region     = var.aws_region
   cluster_name   = var.cluster_name
@@ -18,7 +18,7 @@ module "eks-vpc" {
 }
 
 module "eks-secgroup" {
-  source = "modules/eks-secgroups"
+  source = "./modules/eks-secgroups"
 
   cluster_name  = var.cluster_name
   vpc_id        = module.eks-vpc.vpc_id
@@ -26,7 +26,7 @@ module "eks-secgroup" {
 }
 
 module "eks-master-iam" {
-  source = "modules/iam-roles"
+  source = "./modules/iam-roles"
 
   cluster_role       = "${var.cluster_name}-master"
   service_role       = "eks.amazonaws.com"
@@ -34,7 +34,7 @@ module "eks-master-iam" {
 }
 
 module "eks-node-iam" {
-  source = "modules/iam-roles"
+  source = "./modules/iam-roles"
 
   cluster_role       = "${var.cluster_name}-node"
   service_role       = "ec2.amazonaws.com"
@@ -42,7 +42,7 @@ module "eks-node-iam" {
 }
 
 module "eks-cluster" {
-  source = "modules/eks-cluster"
+  source = "./modules/eks-cluster"
 
   cluster_name    = var.cluster_name
   role_arn        = module.eks-master-iam.arn
@@ -52,7 +52,7 @@ module "eks-cluster" {
 }
 
 module "eks-nodes" {
-  source = "modules/eks-nodes"
+  source = "./modules/eks-nodes"
 
   cluster_name     = var.cluster_name
   aws_keypair      = aws_key_pair.mykeypair.key_name
