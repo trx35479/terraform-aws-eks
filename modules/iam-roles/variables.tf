@@ -1,7 +1,7 @@
 variable "cluster_role" {}
 
 variable "eks_policy_cluster" {
-  type = "list"
+  type = list(string)
 }
 
 variable "service_role" {}

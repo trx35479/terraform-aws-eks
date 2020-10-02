@@ -9,11 +9,11 @@ variable "worker_flavor" {}
 variable "image_id" {}
 
 variable "subnet_ids" {
-  type = "list"
+  type = list(string)
 }
 
 variable "security_groups" {
-  type = "list"
+  type = list(string)
 }
 
 variable "worker_user_data" {}
