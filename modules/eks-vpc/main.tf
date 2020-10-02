@@ -45,7 +45,7 @@ resource "aws_subnet" "main-private" {
 resource "aws_internet_gateway" "main-gw" {
   vpc_id = aws_vpc.main.id
 
-  tags {
+  tags = {
     Name = var.cluster_name
   }
 }

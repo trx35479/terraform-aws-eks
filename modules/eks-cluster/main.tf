@@ -2,7 +2,7 @@
 resource "null_resource" "check-dependency-iam-role" {
   count = length(var.policy_arn)
 
-  triggers {
+  triggers = {
     dependency_id = element(var.policy_arn, count.index)
   }
 }
@@ -16,5 +16,5 @@ resource "aws_eks_cluster" "eks-cluster" {
     subnet_ids         = [var.subnet_ids]
   }
 
-  depends_on = ["null_resource.check-dependency-iam-role"]
+  depends_on = [null_resource.check-dependency-iam-role]
 }

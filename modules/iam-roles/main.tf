@@ -2,7 +2,7 @@
 data "template_file" "policy" {
   template = file("templates/policy.tpl")
 
-  vars {
+  vars = {
     service_role = var.service_role
   }
 }

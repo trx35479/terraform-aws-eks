@@ -3,7 +3,7 @@
 data "template_file" "kubeconfig" {
   template = file("templates/kubeconfig.tpl")
 
-  vars {
+  vars = {
     endpoint     = module.eks-cluster.eks-endpoint
     ca           = module.eks-cluster.eks-ca
     cluster_name = var.cluster_name
@@ -11,7 +11,7 @@ data "template_file" "kubeconfig" {
 }
 
 resource "null_resource" "trigger" {
-  triggers {
+  triggers = {
     template_rendered = data.template_file.kubeconfig.id
   }
 

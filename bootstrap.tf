@@ -3,7 +3,7 @@
 data "template_file" "bootstrap-node" {
   template = file("templates/node_user_data.tpl")
 
-  vars {
+  vars = {
     endpoint     = module.eks-cluster.eks-endpoint
     ca           = module.eks-cluster.eks-ca
     cluster_name = var.cluster_name
@@ -13,13 +13,13 @@ data "template_file" "bootstrap-node" {
 data "template_file" "worker-join" {
   template = file("templates/config_map_aws_auth.tpl")
 
-  vars {
+  vars = {
     worker_iam_arn = module.eks-node-iam.arn
   }
 }
 
 resource "null_resource" "worker-join" {
-  triggers {
+  triggers = {
     template_rendered = data.template_file.worker-join.id
   }
 
