@@ -8,5 +8,5 @@ terraform {
     region  = "ap-southeast-2"
     encrypt = true
   }
-  version = "~> 0.12.0"
+  required_version = "~> 0.12.0"
 }
